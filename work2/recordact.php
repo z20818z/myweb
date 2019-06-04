@@ -1,4 +1,5 @@
 <?php
+header("X-XSS-Protection: 0");
 $db = new mysqli('127.0.0.1','root','admin','mywork');
 if ($db->connect_error) {
     die('無法連上資料庫：' . $db->connect_error);
@@ -9,7 +10,8 @@ $enddate = date_parse($_POST['endTime']);*/
 
 $user = $db->real_escape_string($_POST['user']);
 $title  = $db->real_escape_string($_POST['title']);
-$startTime  = $db->real_escape_string($_POST['startTime']);/*
+$startTime  = $db->real_escape_string($_POST['startTime']);
+/*
 $startYear = $db->real_escape_string($startdate['year']);
 $startMonth = $db->real_escape_string($startdate['month']);
 $startDay = $db->real_escape_string($startdate['day']);*/

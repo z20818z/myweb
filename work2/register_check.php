@@ -1,22 +1,26 @@
 <?php
-$host = "localhost";
+header("X-XSS-Protection: 0");
+$db = new mysqli('127.0.0.1','root','admin','mywork');
+/*$host = "localhost";
 $dbuser = 'root';
 $dbpw = 'admin';
-$db_name = 'mywork';
+$db_name = 'mywork';*/
 
-$account = $_POST['account'];
-$pw = $_POST['pw'];
+$account = $db->real_escape_string($_POST['account']);
+$account = htmlspecialchars($account,ENT_NOQUOTES);
+$pw = $db->real_escape_string($_POST['pw']);
+$pw = htmlspecialchars($pw,ENT_NOQUOTES);
 $hash = password_hash($pw, PASSWORD_DEFAULT);;
-$link = mysqli_connect($host,$dbuser,$dbpw,$db_name);
+//$link = mysqli_connect($host,$dbuser,$dbpw,$db_name);
 $sql = "SELECT * FROM account where account = '$account'";
-$result = mysqli_query($link, $sql);
+$result = mysqli_query($db, $sql);
 $row = @mysqli_fetch_row($result);
 $exit = false;
 //echo password_verify($pw, $reg="/^(\w @\w (\.)com|net|cn)$/"; 
-$reg="/^(\w @\w (\.)com|net|cn)$/"; 
-if(!preg_match($reg,$account)){ 
+
+if (!filter_var($account,FILTER_VALIDATE_EMAIL)){ 
         echo "郵箱必須含有@，且以com結尾";header("refresh:2;url=register.php"); die; 
-} //ACCOUNT驗證
+}//ACCOUNT驗證
 if($row[0]!=null){
         $exit = true;
         /*echo'重複';

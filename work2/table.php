@@ -1,5 +1,6 @@
 <?php
 $user = $_GET['account'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,8 +59,10 @@ $user = $_GET['account'];
                 <tbody id="schedule">
                     <script>
                         var user = '<?php echo $user; ?>';
-                        console.log(user);
                         createTable();
+                        if(thisDay==0){
+                            thisDay=7;
+                        }
                         changeWeek(thisDate,thisDay);
                     </script>
                     
@@ -73,19 +76,20 @@ $user = $_GET['account'];
     <div class="dialog" id="dialogBox">
         <form action="recordact.php" method="POST">
         <input type="text" name="user" style="display:none;" value="<?php echo $user;?>">
-            <span>任務添加</span>
+        <div>
+            <span>任務添加</span><input name="title" placeholder="新增標題"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;">
             <span class="close" style="border-bottom: 1px solid #eee;">X</span>
-            <input name="title" placeholder="新增標題"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;">
+        </div> 
             <br>
             <div>起始時間: <input id="start" type="date" name="startTime"><select id="starthr" name="startTimehr">
-                <!--<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>0</option><option value="0">1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
-            <option>20</option><option>21</option><option>22</option><option>23</option></select>點--></div>   
-            <div>結束時間:<input id="end" type="date" name="endTime"><select id="endhr" name="endTimehr"><!-- <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div>   
+            <div>結束時間:<input id="end" type="date" name="endTime"><select id="endhr" name="endTimehr"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
-            <option>20</option><option>21</option><option>22</option><option>23</option></select>點--></div>  
+            <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div>  
             <!--<textarea name="content_1" id="content_1" rows="8" cols="60"></textarea>-->
             <textarea name="content_2" id="content_2" rows="10" cols="80"></textarea>
             <script>
@@ -101,7 +105,6 @@ $user = $_GET['account'];
 </body>
 <script>
     var user = '<?php echo $user; ?>';
-    console.log(user);
     calender(thisYear,thisMonth);
     ajax_update();
 </script>

@@ -1,10 +1,12 @@
 <?php 
 date_default_timezone_set("Asia/Taipei");
+header("X-XSS-Protection: 0");
 $host = "localhost";
 $dbuser = 'root';
 $dbpw = 'admin';
 $db_name = 'mywork';
 $id = $_GET['id'];
+$user = $_GET['user'];
 echo $id;
 $link = mysqli_connect($host,$dbuser,$dbpw,$db_name);
 
@@ -48,10 +50,30 @@ echo $endTime;
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script type="text/javascript" src = "js/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src = "js/jquery-3.3.1.min.js"></script>
+    <script>
+    $(document).ready(function(){
+    $("#email").blur(function(){
+        if(isemail($("#email").val())==false){
+            alert('請輸入正確EMAIL格式');
+            $(".log").hide();
+        }else{
+            $(".log").show();
+        }
+    });
+    });
+    function isemail(email) { 
+    var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if(!regex.test(email)) {
+        return false;
+    }else{
+        return true;
+    }}
+    </script>
 </head>
 <body>
 <form action="recordact_update.php" method="GET">
             <input type="text" name="id" style="display:none;" value="<?php echo $id;?>"></div>
+            <input type="text" name="user" style="display:none;" value="<?php echo $user;?>"></div>
             <div>任務添加:
             <input id="title" name="title"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;"></div>
             
@@ -70,7 +92,9 @@ echo $endTime;
                 CKEDITOR.replace( "content_2", {});
                 width:500;
             </script>
-            <input id="submit" type="submit" name="senddata" value="送出" onclick="sendmail()">
+            <div>邀請對象</div>
+            <input id="email" placeholder="新增邀請對象" name="invite">
+            <input class="log" id="submit" type="submit" name="senddata" value="送出" onclick="sendmail()">
         </form>
         <iframe id="id_iframe" name="id_iframe" style="display:none"></iframe>
 </body>

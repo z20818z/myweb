@@ -1,4 +1,5 @@
 <?php 
+header("X-XSS-Protection: 0");
 $host = "localhost";
 $dbuser = 'root';
 $dbpw = 'admin';
@@ -25,7 +26,7 @@ function read(){
     if($result){
         if(mysqli_num_rows($result)>0){
             while($row = mysqli_fetch_assoc($result)){
-                echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}'>修改</a></td><td><a href='delete.php?id={$row["id"]}'>刪除</a></td></tr>";
+                echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&user={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&user={$user}'>刪除</a></td></tr>";
             }
         }
 
