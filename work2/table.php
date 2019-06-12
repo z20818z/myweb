@@ -74,7 +74,7 @@ $user = $_GET['account'];
 <!--FORM-->
 
     <div class="dialog" id="dialogBox">
-        <form action="recordact.php" method="POST">
+        <form action="recordact.php" method="GET">
         <input type="text" name="user" style="display:none;" value="<?php echo $user;?>">
         <div>
             <span>任務添加</span><input name="title" placeholder="新增標題"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;">

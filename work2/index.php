@@ -45,10 +45,69 @@
         return true;
     }}
     </script>
+    
+<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 </head>
 
 <body>
+<script>
+window.fbAsyncInit = function() {
+FB.init({
+    appId      : '621094128375188',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v3.3'
+});
 
+FB.getLoginStatus(function(response) {
+statusChangeCallback(response);
+});
+};
+
+// 處理各種登入身份
+function statusChangeCallback(response) {
+console.log(response);
+
+// 登入 FB 且已加入會員
+if (response.status === 'connected') {
+console.log("已登入 FB，並加入 WFU BLOG DEMO 應用程式");
+
+FB.api('/me?fields=id,name,email', function(response) {
+console.log(response);
+console.log("會員暱稱：" + response.name);
+console.log("會員 email：" + response.email);
+//window.location.href="login_check.php?account="
+});
+}
+
+// 登入 FB, 未偵測到加入會員
+else if (response.status === "not_authorized") {
+console.log("已登入 FB，但未加入 WFU BLOG DEMO 應用程式");
+}
+
+// 未登入 FB
+else {
+console.log("未登入 FB");
+}
+}
+
+function checkLoginState() {
+FB.getLoginStatus(function(response) {
+statusChangeCallback(response);
+});
+}
+
+// 載入 FB SDK
+(function(d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s);
+js.id = id;
+js.src = "https://connect.facebook.net/zh_TW/sdk.js";
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+<div>
     <form id="login" action="login_check.php" method="POST" >
         帳號:<input type="email" name="account" id="email">
         密碼:<input type="password" name="pw">
@@ -56,6 +115,7 @@
         <input id="log" type="submit" value="登入">
     </form>
     <button onclick="location.href=('register.php')">註冊會員</button>
-
+    <fb:login-button scope="public_profile,email" autologoutlink="true" onlogin="checkLoginState();"></fb:login-button>
+</div>
 </body>
 </html>
