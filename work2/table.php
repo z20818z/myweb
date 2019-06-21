@@ -1,6 +1,9 @@
 <?php
-$user = $_GET['account'];
-
+$user = @$_GET['userID'];
+session_start();
+if(@!$_SESSION['login']){
+    header("Location: index.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +29,7 @@ $user = $_GET['account'];
 </style>
 </head>
 <body>
-<?php   echo '<div><button  type="button" onclick=location.href="edittable.php?account='.$user.'">查看行程</button>';
+<?php   echo '<div><button  type="button" onclick=location.href="edittable.php?userID='.$user.'">查看行程</button>';
         echo '<button  type="button" onclick="recordAct()">新增</button>'; 
         echo '<button  type="button" onclick=location.href="index.php?logout=1">登出</button>'
         ?>
@@ -81,12 +84,12 @@ $user = $_GET['account'];
             <span class="close" style="border-bottom: 1px solid #eee;">X</span>
         </div> 
             <br>
-            <div>起始時間: <input id="start" type="date" name="startTime"><select id="starthr" name="startTimehr">
+            <div>起始時間: <input id="start" type="date" name="startTime"><select id="starthr" name="starthour">
                 <option>0</option><option value="0">1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
             <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div>   
-            <div>結束時間:<input id="end" type="date" name="endTime"><select id="endhr" name="endTimehr"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            <div>結束時間:<input id="end" type="date" name="endTime"><select id="endhr" name="endhour"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
             <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div>  

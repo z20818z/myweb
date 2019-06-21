@@ -6,11 +6,11 @@ if ($db->connect_error) {
 
 $db->set_charset("utf8");
 $id = $_GET['id'];
-$user = $_GET['user'];
+$user = $_GET['userID'];
 echo $id;
 $sql = "DELETE FROM `recorddata` WHERE `id` = $id ";
 $result = mysqli_query($db,$sql);
 if($result){
-    header("Location: edittable.php?account=".$user);
+    header("Location: edittable.php?userID=".$user);
 }
 ?>

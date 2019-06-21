@@ -1,38 +1,59 @@
 <?php 
 header("X-XSS-Protection: 0");
+/*
 $host = "localhost";
 $dbuser = 'root';
 $dbpw = 'admin';
 $db_name = 'mywork';
-
-$user = $_GET['account'];
-
-
+$user = $_GET['userID'];
 $link = mysqli_connect($host,$dbuser,$dbpw,$db_name);
-
 if($link){
     mysqli_query($link, "SET NAMES utf8");
-    //echo "已正確連線\n";
-    //echo $printdata;
 }
 else{
     echo '無法連線mysql資料庫 :<br/>' . mysqli_connect_error();
 }
 function read(){
     global $link,$user;
-    $sql = "SELECT * FROM `recorddata` Where `user` = '{$user}' ORDER BY startTime ASC";
+    $sql = "SELECT * FROM `recorddata` Where `userID` = '{$user}' ORDER BY startTime ASC";
     $result =  mysqli_query($link, $sql);
 
     if($result){
         if(mysqli_num_rows($result)>0){
             while($row = mysqli_fetch_assoc($result)){
-                echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&user={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&user={$user}'>刪除</a></td></tr>";
+                echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&userID={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&userID={$user}'>刪除</a></td></tr>";
             }
         }
 
         mysqli_free_result($result);
     }
+}*/
+
+$dbms='mysql';    
+$host='localhost'; 
+$dbName='mywork';   
+$username='root';   
+$pass='admin';          
+$dsn="$dbms:host=$host;dbname=$dbName";
+$user = $_GET['userID'];
+function read(){
+    global $link,$user,$dsn,$username,$pass;
+    try {
+        $dbh = new PDO($dsn, $username, $pass); //初始化PDO
+        $dbh->exec("set names utf8");
+        //echo "Successful<br/>";
+        $stmt = $dbh->prepare("SELECT * FROM `recorddata` Where `userID` = ? ORDER BY startTime ASC");
+        if ($stmt->execute(array($user))) {
+        while ($row = $stmt->fetch()) {
+            echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&userID={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&userID={$user}'>刪除</a></td></tr>";
+        }
+        }
+        $dbh = null;
+    } catch (PDOException $e) {
+        die ("Error!: " . $e->getMessage() . "<br/>");
+    }
 }
+
 
 ?>
 
@@ -50,6 +71,7 @@ function read(){
     <script type="text/javascript" src = "js/jquery-3.3.1.min.js"></script>
 </head>
 <body>
+<a href="table.php?userID=<?php echo $user;?>">返回</a>
     <table class="table text-center table-striped table-bordered table-condensed" id="contentTable">
         <thead>
             <tr>

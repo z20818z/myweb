@@ -2,11 +2,12 @@
     session_start();
     $logout = @$_GET['logout'];
     if($logout == 1){
-        unset($_SESSION['account']);
-        unset($_SESSION['pw']);
+       // unset($_SESSION['account']);
+       // unset($_SESSION['pw']);
+        $_SESSION['remember']=false;
     }
-    if(isset($_SESSION['account']) && $_SESSION['pw']){
-        header("Location:table.php?account={$_SESSION['account']}"); 
+    if(@$_SESSION['remember']){
+        header("Location:table.php?account={$_COOKIE['account']}"); 
     }
 ?>
 <!DOCTYPE html>
@@ -76,7 +77,8 @@ FB.api('/me?fields=id,name,email', function(response) {
 console.log(response);
 console.log("會員暱稱：" + response.name);
 console.log("會員 email：" + response.email);
-//window.location.href="login_check.php?account="
+console.log("會員 ID：" + response.id);
+//window.location.href="login_check_fb.php?id="+response.id+"&email="+response.email;
 });
 }
 

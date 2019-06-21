@@ -1,40 +1,33 @@
 <?php 
 date_default_timezone_set("Asia/Taipei");
 header("X-XSS-Protection: 0");
-$host = "localhost";
-$dbuser = 'root';
-$dbpw = 'admin';
-$db_name = 'mywork';
+
+$dbms='mysql';    
+$host='localhost'; 
+$dbName='mywork';   
+$username='root';   
+$pass='admin';          
+$dsn="$dbms:host=$host;dbname=$dbName";
 $id = $_GET['id'];
-$user = $_GET['user'];
-echo $id;
-$link = mysqli_connect($host,$dbuser,$dbpw,$db_name);
-
-if($link){
-    mysqli_query($link, "SET NAMES utf8");
-    //echo "已正確連線\n";
-    //echo $printdata;
-}
-else{
-    echo '無法連線mysql資料庫 :<br/>' . mysqli_connect_error();
-}
-$sql = "SELECT * FROM `recorddata` WHERE `id` = $id";
-$result =  mysqli_query($link, $sql);
-
-if($result){
-    if(mysqli_num_rows($result)>0){
-        while($row = mysqli_fetch_assoc($result)){
-            $startTime = $row['startTime'];
-            $endTime = $row['endTime'];
-            $title = $row['title'];
-            $content_2 = $row['content_2'];
-        }
+$user = $_GET['userID'];
+try {
+    $dbh = new PDO($dsn, $username, $pass); //初始化PDO
+    //echo "Successful<br/>";
+    $stmt = $dbh->prepare("SELECT * FROM `recorddata` WHERE `id` = ?");
+    if ($stmt->execute(array($id))) {
+    while ($row = $stmt->fetch()) {
+        $startTime = $row['startTime'];
+        $endTime = $row['endTime'];
+        $title = $row['title'];
+        $content_2 = $row['content_2'];
+        
     }
-
-    mysqli_free_result($result);
+    }
+    $dbh = null;
+} catch (PDOException $e) {
+    die ("Error!: " . $e->getMessage() . "<br/>");
 }
 
-echo $endTime;
 ?>
 
 <!DOCTYPE html>
@@ -75,17 +68,17 @@ echo $endTime;
             <input type="text" name="id" style="display:none;" value="<?php echo $id;?>"></div>
             <input type="text" name="user" style="display:none;" value="<?php echo $user;?>"></div>
             <div>任務添加:
-            <input id="title" name="title"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;"></div>
+            <input id="titl" name="title"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;" value="<?php echo $title;?>"></div>
             
-            <div>起始時間: <input id="start" type="date" name="startTime" value="<?php echo $startTime;?>">
-                <!--<select id="starthr" name="startTimehr"></select><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            <div>起始時間: <input id="start" type="date" name="startTime" value="<?php echo $startTime;?>"><select id="starthr" name="starthour">
+            <option>0</option><option value="0">1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
-            <option>20</option><option>21</option><option>22</option><option>23</option></select>點--></div>   
-            <div>結束時間:<input id="end" type="date" name="endTime" value="<?php echo $endTime; ?>"><!-- <select id="endhr" name="endTimehr"></select><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div>   
+            <div>結束時間:<input id="end" type="date" name="endTime" value="<?php echo $endTime;?>"><select id="endhr" name="endhour"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
             <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
             <option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
-            <option>20</option><option>21</option><option>22</option><option>23</option></select>點--></div>  
+            <option>20</option><option>21</option><option>22</option><option>23</option></select>點</div> 
             <div>通知:<input id="call-num" type="number" name="call-num"></div><select name="call-time" id="call-time"><option>分</option><option>小時</option><option>日</option></select>
             <textarea name="content_2" id="content_2" rows="10" cols="80" ><?php echo $content_2;?></textarea>
             <script>
@@ -101,11 +94,13 @@ echo $endTime;
 <script>
 //送信
 function sendmail(){  
+
+    
     console.log($('#call-time').val());
     interval = 0;
     second = parseInt($('#call-num').val());
-    
-    switch($('#call-time').val()){
+    if(second!=0){
+        switch($('#call-time').val()){
         case "分":
             interval = second * 60;
             break;
@@ -119,15 +114,27 @@ function sendmail(){
             console.log($('#call-time').val());
             break;
     }
-    $.ajax({
-        type:'GET',
-        url: "datefunction.php", 
-        data:{'interval':interval ,'title':$('#title').val()},
-        dataType:'html',
-        success: function(data){
-            console.log(data);}
-        });
-    
+        $.ajax({
+            type:'GET',
+            url: "datefunction.php", 
+            data:{'interval':interval ,'title':$('#titl').val()},
+            dataType:'html',
+            success: function(data){
+                console.log("send");
+                }
+            });
+        }
+        if($("email").text()!=null){
+        $.ajax({
+            type:'GET',
+            url: "datefunction.php", 
+            data:{'invite':$("#id").text(),'interval':interval ,'title':$('#titl').val()},
+            dataType:'html',
+            success: function(data){
+                }
+            });
+        }
+        console.log($('#titl').val());
 }
 </script>
 </html>
