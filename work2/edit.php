@@ -12,7 +12,7 @@ $id = $_GET['id'];
 $user = $_GET['userID'];
 try {
     $dbh = new PDO($dsn, $username, $pass); //初始化PDO
-    //echo "Successful<br/>";
+    $dbh->exec("set names utf8");
     $stmt = $dbh->prepare("SELECT * FROM `recorddata` WHERE `id` = ?");
     if ($stmt->execute(array($id))) {
     while ($row = $stmt->fetch()) {
@@ -20,7 +20,7 @@ try {
         $endTime = $row['endTime'];
         $title = $row['title'];
         $content_2 = $row['content_2'];
-        
+        $dataID = $row['dataID'];
     }
     }
     $dbh = null;
@@ -65,8 +65,9 @@ try {
 </head>
 <body>
 <form action="recordact_update.php" method="GET">
-            <input type="text" name="id" style="display:none;" value="<?php echo $id;?>"></div>
-            <input type="text" name="user" style="display:none;" value="<?php echo $user;?>"></div>
+            <input type="text" name="id" style="display:none;" value="<?php echo $id;?>">
+            <input type="text" name="user" style="display:none;" value="<?php echo $user;?>">
+            <input type="text" name="dataID" style="display:none;" value="<?php echo $dataID;?>">
             <div>任務添加:
             <input id="titl" name="title"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;" value="<?php echo $title;?>"></div>
             
@@ -124,7 +125,7 @@ function sendmail(){
                 }
             });
         }
-        if($("email").text()!=null){
+        /*if($("email").text()!=null){
         $.ajax({
             type:'GET',
             url: "datefunction.php", 
@@ -133,7 +134,7 @@ function sendmail(){
             success: function(data){
                 }
             });
-        }
+        }*/
         console.log($('#titl').val());
 }
 </script>

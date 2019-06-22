@@ -11,8 +11,8 @@ if($interval > 0){
     sendmail($title);
 }
 
-if(isset($invite)){
+/*if(isset($invite)){
     invite($title,$invite);
-}
+}*/
 
 ?>

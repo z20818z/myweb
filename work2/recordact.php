@@ -30,6 +30,7 @@ $endTime  = $_GET['endTime'];
 $endhour  = $_GET['endhour'];
 $content_2  = $_GET['content_2'];
 $userID = "";
+$rand = md5(uniqid());
 try {
     $dbh = new PDO($dsn, $username, $pass); //初始化PDO
     $dbh->exec("set names utf8");
@@ -42,10 +43,10 @@ try {
     $row = $stmt->fetch();
     $userID = $row['userID'];
     echo $userID;
-    $stmt = $dbh->prepare("INSERT INTO recorddata (title,userID,startTime,starthour,endTime,endhour,content_2,user) VALUES (?,?,?,?,?,?,?,?)");
-    $stmt->execute(array($title,$userID,$startTime,$starthour,$endTime,$endhour,$content_2,$row['account']));
+    $stmt = $dbh->prepare("INSERT INTO recorddata (title,userID,startTime,starthour,endTime,endhour,dataID,content_2,user) VALUES (?,?,?,?,?,?,?,?,?)");
+    $stmt->execute(array($title,$userID,$startTime,$starthour,$endTime,$endhour,$rand,$content_2,$row['account']));
     echo '成功輸入<br>';
-    print_r(array($title,$userID,$startTime,$starthour,$endTime,$endhour,$content_2,$row['account']));
+    print_r(array($title,$userID,$startTime,$starthour,$endTime,$endhour,$rand,$content_2,$row['account']));
     echo "<meta http-equiv=REFRESH CONTENT=1;url=table.php?userID=$user>";
     $dbh = null;
 } catch (PDOException $e) {

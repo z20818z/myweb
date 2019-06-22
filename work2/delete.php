@@ -1,16 +1,25 @@
 <?php
-$db = new mysqli('127.0.0.1','root','admin','mywork');
-if ($db->connect_error) {
-    die('無法連上資料庫：' . $db->connect_error);
+session_start();
+if(@!$_SESSION['login']){
+    header("Location: index.php");
 }
-
-$db->set_charset("utf8");
+$dbms='mysql';    
+$host='localhost'; 
+$dbName='mywork';   
+$username='root';   
+$pass='admin';          
+$dsn="$dbms:host=$host;dbname=$dbName";
 $id = $_GET['id'];
 $user = $_GET['userID'];
-echo $id;
-$sql = "DELETE FROM `recorddata` WHERE `id` = $id ";
-$result = mysqli_query($db,$sql);
-if($result){
+try {
+    $dbh = new PDO($dsn, $username, $pass); //初始化PDO
+    $dbh->exec("set names utf8");
+    echo "Successful<br/>";
+    $stmt = $dbh->prepare("DELETE FROM `recorddata` WHERE `id` = ? ");
+    $stmt->execute(array($id));
     header("Location: edittable.php?userID=".$user);
+    $dbh = null;
+} catch (PDOException $e) {
+    die ("Error!: " . $e->getMessage() . "<br/>");
 }
 ?>
