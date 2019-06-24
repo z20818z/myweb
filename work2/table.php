@@ -4,6 +4,26 @@ session_start();
 if(@!$_SESSION['login']){
     header("Location: index.php");
 }
+/*
+function getdata($date,$starthour){
+    $dbms='mysql';    
+    $host='localhost'; 
+    $dbName='mywork';   
+    $username='root';   
+    $pass='admin';          
+    $dsn="$dbms:host=$host;dbname=$dbName";
+    try {
+        $dbh = new PDO($dsn, $username, $pass); //初始化PDO
+        $dbh->exec("set names utf8");
+        $stmt = $dbh->prepare("SELECT * from `recorddata` WHERE userID=? AND `starttime` =? AND `starthour`=?");
+        $stmt->execute(array($userID,$date,$starthour));
+        //echo "<meta http-equiv=REFRESH CONTENT=1;url=table.php?userID=$user>";
+        $dbh = null;
+    } catch (PDOException $e) {
+        die ("Error!: " . $e->getMessage() . "<br/>");
+    }
+}
+*/
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,8 +96,8 @@ if(@!$_SESSION['login']){
     <div class="back" id="back"></div>
 <!--FORM-->
 
-    <div class="dialog" id="dialogBox">
-        <form action="recordact.php" method="GET">
+    <div class="dialog" id="dialogBox" >
+        <form action="recordact.php" method="POST" enctype="multipart/form-data">
         <input type="text" name="user" style="display:none;" value="<?php echo $user;?>">
         <div>
             <span>任務添加</span><input name="title" placeholder="新增標題"  style=" border:1px; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none;">
@@ -99,6 +119,8 @@ if(@!$_SESSION['login']){
                 CKEDITOR.replace( "content_2", {});
                 width:500;
             </script>
+            <div>圖片名稱:<input type="file" accept=".png, .jpg, .jpeg, .gif" name="file" id="file"></div>
+            
             <input id="submit" type="submit" name="senddata" value="送出" onclick="closeform()">
         </form>
         <iframe id="id_iframe" name="id_iframe" style="display:none"></iframe>
@@ -107,6 +129,8 @@ if(@!$_SESSION['login']){
     
 </body>
 <script>
+
+
     var user = '<?php echo $user; ?>';
     calender(thisYear,thisMonth);
     ajax_update();

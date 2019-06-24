@@ -59,44 +59,98 @@ FB.init({
       xfbml      : true,
       version    : 'v3.3'
 });
-
 FB.getLoginStatus(function(response) {
-statusChangeCallback(response);
+    statusChangeCallback_before(response);
 });
+logout();
 };
 
 // 處理各種登入身份
-function statusChangeCallback(response) {
-console.log(response);
+function logout(){
+  FB.getLoginStatus(function(response) {
+    FB.logout(function(response){
+      console.log("Logged Out!");
+      window.location = "https://site.test/work2";
+    });
+  });
+}
+function statusChangeCallback_before(response) {
+//console.log(response);
 
 // 登入 FB 且已加入會員
-if (response.status === 'connected') {
-console.log("已登入 FB，並加入 WFU BLOG DEMO 應用程式");
+        if (response.status === 'connected') {
+        console.log("已登入 FB，並加入 WFU BLOG DEMO 應用程式");
 
-FB.api('/me?fields=id,name,email', function(response) {
-console.log(response);
-console.log("會員暱稱：" + response.name);
-console.log("會員 email：" + response.email);
-console.log("會員 ID：" + response.id);
-//window.location.href="login_check_fb.php?id="+response.id+"&email="+response.email;
-});
-}
+        FB.api('/me?fields=id,name,email', function(response) {
+        //console.log(response);
+        console.log("會員暱稱：" + response.name);
+        console.log("會員 email：" + response.email);
+        console.log("會員 ID：" + response.id);
+        });
+        
+    }
 
 // 登入 FB, 未偵測到加入會員
-else if (response.status === "not_authorized") {
-console.log("已登入 FB，但未加入 WFU BLOG DEMO 應用程式");
-}
+    else if (response.status === "not_authorized") {
+        console.log("已登入 FB，但未加入 WFU BLOG DEMO 應用程式");
+    }
 
 // 未登入 FB
-else {
-console.log("未登入 FB");
+    else {
+        console.log("未登入 FB");
+    }
 }
+function share()
+{
+   FB.ui(
+    {
+      method: 'share',
+      href: 'https://site.test/work2/',
+    },
+    // callback
+    function(response) {
+      if (response && !response.error_message) {
+        alert('分享成功後即可領取紅利!');
+      } else {
+        // alert('Error while posting.');
+      }
+    }
+  )
+};
+
+
+function statusChangeCallback(response) {
+//console.log(response);
+
+// 登入 FB 且已加入會員
+        if (response.status === 'connected') {
+        console.log("已登入 FB，並加入 WFU BLOG DEMO 應用程式");
+
+        FB.api('/me?fields=id,name,email', function(response) {
+        //console.log(response);
+        console.log("會員暱稱：" + response.name);
+        console.log("會員 email：" + response.email);
+        console.log("會員 ID：" + response.id);
+        window.location = "https://site.test/work2/fb.php?fbID="+response.id+"&account="+response.email;
+        });
+        
+    }
+
+// 登入 FB, 未偵測到加入會員
+    else if (response.status === "not_authorized") {
+        console.log("已登入 FB，但未加入 WFU BLOG DEMO 應用程式");
+    }
+
+// 未登入 FB
+    else {
+        console.log("未登入 FB");
+    }
 }
 
 function checkLoginState() {
-FB.getLoginStatus(function(response) {
-statusChangeCallback(response);
-});
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
 }
 
 // 載入 FB SDK
@@ -118,6 +172,9 @@ fjs.parentNode.insertBefore(js, fjs);
     </form>
     <button onclick="location.href=('register.php')">註冊會員</button>
     <fb:login-button scope="public_profile,email" autologoutlink="true" onlogin="checkLoginState();"></fb:login-button>
+    <button onclick="share()">點此分享</button> 
+
 </div>
+
 </body>
 </html>

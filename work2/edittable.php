@@ -45,7 +45,7 @@ function read(){
         $stmt = $dbh->prepare("SELECT * FROM `recorddata` Where `userID` = ? ORDER BY startTime ASC");
         if ($stmt->execute(array($user))) {
         while ($row = $stmt->fetch()) {
-            echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&userID={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&userID={$user}'>刪除</a></td></tr>";
+            echo "<tr><td>{$row['startTime']}</td><td>{$row['endTime']}</td><td>{$row['title']}</td><td>{$row['content_2']}</td><td><a href='edit.php?id={$row["id"]}&userID={$user}'>修改</a></td><td><a href='delete.php?id={$row["id"]}&userID={$user}'>刪除</a></td><td><button onclick='share()'>分享</button></td></tr>";
         }
         }
         $dbh = null;
@@ -70,12 +70,48 @@ function read(){
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script type="text/javascript" src = "js/jquery-3.3.1.min.js"></script>
 </head>
+<script>
+window.fbAsyncInit = function() {
+FB.init({
+    appId      : '621094128375188',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v3.3'
+});
+};
+function share()
+{
+   FB.ui(
+    {
+      method: 'share',
+      href: 'https://site.test/work2/',
+    },
+    // callback
+    function(response) {
+      if (response && !response.error_message) {
+        alert('分享成功!');
+      } else {
+        // alert('Error while posting.');
+      }
+    }
+  )
+};
+
+(function(d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s);
+js.id = id;
+js.src = "https://connect.facebook.net/zh_TW/sdk.js";
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
 <body>
 <a href="table.php?userID=<?php echo $user;?>">返回</a>
     <table class="table text-center table-striped table-bordered table-condensed" id="contentTable">
         <thead>
             <tr>
-            <th>開始日</th><th>結束日</th><th>任務標題</th><th>任務內容</th><th>修改</th><th>刪除</th>
+            <th>開始日</th><th>結束日</th><th>任務標題</th><th>任務內容</th><th>修改</th><th>刪除</th><th>分享</th>
             </tr>
         </thead>
         <tbody>

@@ -6,16 +6,16 @@ if ($db->connect_error) {
     die('無法連上資料庫：' . $db->connect_error);
 }
 
-$invite = $_GET['invite'];
+$invite = $_POST['invite'];
 $db->set_charset("utf8");
-$id = $_GET['id'];
-$userID = $_GET['user'];
-$title  = $db->real_escape_string($_GET['title']);
-$startTime  = $db->real_escape_string($_GET['startTime']);
-$endTime  = $db->real_escape_string($_GET['endTime']);
-$content_2  = $db->real_escape_string($_GET['content_2']);
-$starthour  = $db->real_escape_string($_GET['starthour']);
-$endhour  = $db->real_escape_string($_GET['endhour']);
+$id = $_POST['id'];
+$userID = $_POST['user'];
+$title  = $db->real_escape_string($_POST['title']);
+$startTime  = $db->real_escape_string($_POST['startTime']);
+$endTime  = $db->real_escape_string($_POST['endTime']);
+$content_2  = $db->real_escape_string($_POST['content_2']);
+$starthour  = $db->real_escape_string($_POST['starthour']);
+$endhour  = $db->real_escape_string($_POST['endhour']);
 $sql_account = "SELECT * FROM account where account = '$invite'";
 $result_account = mysqli_query($db, $sql_account);
 $row = @mysqli_fetch_row($result_account);
@@ -43,17 +43,46 @@ $dbName='mywork';
 $username='root';   
 $pass='admin';          
 $dsn="$dbms:host=$host;dbname=$dbName";
-$id = $_GET['id'];
-$userID = $_GET['user'];
-$title  = $_GET['title'];
-$startTime  = $_GET['startTime'];
-$starthour  = $_GET['starthour'];
-$endTime  = $_GET['endTime'];
-$endhour  = $_GET['endhour'];
-$content_2  = $_GET['content_2'];
-$dataID = $_GET['dataID'];
-$invite = $_GET['invite'];
+$id = $_POST['id'];
+$userID = $_POST['user'];
+$title  = $_POST['title'];
+$startTime  = $_POST['startTime'];
+$starthour  = $_POST['starthour'];
+$endTime  = $_POST['endTime'];
+$endhour  = $_POST['endhour'];
+$content_2  = $_POST['content_2'];
+$dataID = $_POST['dataID'];
+$invite = $_POST['invite'];
 echo $content_2;
+if ((($_FILES["file"]["type"] == "image/gif")
+            || ($_FILES["file"]["type"] == "image/jpeg")
+            || ($_FILES["file"]["type"] == "image/jpg")
+            || ($_FILES["file"]["type"] == "image/png"))
+            && ($_FILES["file"]["size"] < 200000)) {
+            if ($_FILES["file"]["error"] > 0) {
+                echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+            } else {
+                echo "檔名: " . $_FILES["file"]["name"] . "<br />";
+                echo "檔案型別: " . $_FILES["file"]["type"] . "<br />";
+                echo "檔案大小: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+                echo "快取檔案: " . $_FILES["file"]["tmp_name"] . "<br />";
+
+            //設定檔案上傳路徑，選擇指定資料夾
+
+                if (file_exists("upload/" . $_FILES["file"]["name"])) {
+                    echo $_FILES["file"]["name"] . " already exists. ";
+                } else {
+                    move_uploaded_file(
+                        $_FILES["file"]["tmp_name"],
+                        "upload/" . $_FILES["file"]["name"]
+                    );
+                    echo "儲存於: " . "upload/" . $_FILES["file"]["name"];//上傳成功後提示上傳資訊
+                }
+            }
+        } else {
+            echo "上傳失敗！";//上傳失敗後顯示錯誤資訊
+        }
+    $file_place = "upload/" . $_FILES["file"]["name"];
 try {
     $dbh = new PDO($dsn, $username, $pass); //初始化PDO
     $dbh->exec("set names utf8");
@@ -73,8 +102,8 @@ try {
         if($invite_user_exist){
             echo '此人已經有此行程若是您有修改將一起更新';
         }else{
-            $stmt = $dbh->prepare("INSERT INTO `recorddata` (title, startTime,starthour,endTime,endhour,userID,user,content_2,dataID) VALUES (?,?,?,?,?,?,?,?,?)");
-            $stmt -> execute(array($title,$startTime,$starthour,$endTime,$endhour,$rowuserID,$invite,$content_2,$dataID));
+            $stmt = $dbh->prepare("INSERT INTO `recorddata` (title, startTime,starthour,endTime,endhour,userID,user,content_2,dataID,filepath) VALUES (?,?,?,?,?,?,?,?,?,?)");
+            $stmt -> execute(array($title,$startTime,$starthour,$endTime,$endhour,$rowuserID,$invite,$content_2,$dataID,$file_place));
             echo '新加入資料了';
         }
         
@@ -83,8 +112,8 @@ try {
         include('../mail.php');
         invite("invite you to join".$title."  <a href='localhost/work2'>localhost/work2</a>",$invite);
     }
-    $stmt = $dbh->prepare("UPDATE `recorddata` SET `title`= ? ,`startTime`= ?,`starthour`=? ,`endtime`=? ,`endhour`=?,`content_2`=? WHERE `dataID` = ?");
-    $stmt->execute(array($title,$startTime,$starthour,$endTime,$endhour,$content_2,$dataID));
+    $stmt = $dbh->prepare("UPDATE `recorddata` SET `title`= ? ,`startTime`= ?,`starthour`=? ,`endtime`=? ,`endhour`=?,`content_2`=?,`filepath`=? WHERE `dataID` = ?");
+    $stmt->execute(array($title,$startTime,$starthour,$endTime,$endhour,$content_2,$file_place,$dataID));
     //echo "<meta http-equiv=REFRESH CONTENT=1;url=table.php?userID=$user>";
     header("Location: edittable.php?userID=".$userID);
     $dbh = null;

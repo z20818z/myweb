@@ -64,7 +64,7 @@ try {
     </script>
 </head>
 <body>
-<form action="recordact_update.php" method="GET">
+<form action="recordact_update.php" method="POST" enctype="multipart/form-data">
             <input type="text" name="id" style="display:none;" value="<?php echo $id;?>">
             <input type="text" name="user" style="display:none;" value="<?php echo $user;?>">
             <input type="text" name="dataID" style="display:none;" value="<?php echo $dataID;?>">
@@ -86,6 +86,7 @@ try {
                 CKEDITOR.replace( "content_2", {});
                 width:500;
             </script>
+            <div>圖片名稱:<input type="file" accept=".png, .jpg, .jpeg, .gif" name="file" id="file"></div>
             <div>邀請對象</div>
             <input id="email" placeholder="新增邀請對象" name="invite">
             <input class="log" id="submit" type="submit" name="senddata" value="送出" onclick="sendmail()">
